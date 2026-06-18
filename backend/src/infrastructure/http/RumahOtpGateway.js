@@ -16,15 +16,24 @@ class RumahOtpGateway extends OtpGateway {
   }
 
   async _get(path, params) {
+    let data;
     try {
-      const { data } = await this.client.get(path, { params });
-      return data;
+      const res = await this.client.get(path, { params });
+      data = res.data;
     } catch (err) {
       const apiMessage = err.response?.data?.error?.message;
       const error = new Error(apiMessage || err.message || 'Gagal menghubungi RumahOTP');
       error.status = err.response?.status || 502;
       throw error;
     }
+
+    if (data && data.success === false) {
+      const error = new Error(data.error?.message || 'Permintaan ke RumahOTP ditolak');
+      error.status = 400;
+      throw error;
+    }
+
+    return data;
   }
 
   getBalance() {

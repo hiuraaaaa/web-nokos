@@ -1,17 +1,26 @@
+import { useState } from 'react';
+
+const PREVIEW_COUNT = 5;
+
 export function ServiceGrid({ services, selected, onSelect, loading }) {
+  const [expanded, setExpanded] = useState(false);
+
   if (loading) {
     return (
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-        {Array.from({ length: 8 }).map((_, i) => (
+      <div className="grid grid-cols-3 gap-2">
+        {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="h-20 animate-pulse rounded-xl bg-surface-alt" />
         ))}
       </div>
     );
   }
 
+  const visible = expanded ? services : services.slice(0, PREVIEW_COUNT);
+  const hasMore = !expanded && services.length > PREVIEW_COUNT;
+
   return (
-    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-      {services.map((service) => (
+    <div className="grid grid-cols-3 gap-2">
+      {visible.map((service) => (
         <button
           key={service.code}
           onClick={() => onSelect(service)}
@@ -25,6 +34,16 @@ export function ServiceGrid({ services, selected, onSelect, loading }) {
           <span className="line-clamp-1 text-xs text-ink">{service.name}</span>
         </button>
       ))}
+
+      {hasMore && (
+        <button
+          onClick={() => setExpanded(true)}
+          className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line bg-surface p-3 text-center text-muted hover:border-signal-indigo/50"
+        >
+          <span className="text-lg leading-none">···</span>
+          <span className="text-xs">Lihat Lainnya</span>
+        </button>
+      )}
     </div>
   );
 }
