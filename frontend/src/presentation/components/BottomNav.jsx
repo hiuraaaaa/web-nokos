@@ -19,15 +19,19 @@ export function BottomNav({ active, onChange }) {
             <button
               key={tab.id}
               onClick={() => onChange(tab.id)}
-              className="relative flex flex-1 flex-col items-center gap-1 py-2"
+              className="relative flex flex-1 flex-col items-center gap-1 py-2.5"
             >
-              {isActive && <span className="absolute top-0 h-0.5 w-6 rounded-full bg-ink" />}
+              {isActive && (
+                <span className="absolute top-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-accent" />
+              )}
               <Icon
                 size={19}
-                strokeWidth={isActive ? 2 : 1.75}
-                className={isActive ? 'text-ink' : 'text-muted-2'}
+                strokeWidth={isActive ? 2.2 : 1.75}
+                className={isActive ? 'text-accent' : 'text-muted-2'}
               />
-              <span className={`text-[11px] ${isActive ? 'font-medium text-ink' : 'text-muted-2'}`}>
+              <span
+                className={`text-[10px] font-medium ${isActive ? 'text-accent' : 'text-muted-2'}`}
+              >
                 {tab.label}
               </span>
             </button>

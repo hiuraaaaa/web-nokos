@@ -1,4 +1,4 @@
-import { ShoppingBag, ArrowRight } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Zap } from 'lucide-react';
 import { StatCard } from '../components/StatCard';
 import { StatusBadge } from '../components/StatusBadge';
 import { EmptyState } from '../components/EmptyState';
@@ -14,7 +14,7 @@ function formatDate(ts) {
   });
 }
 
-export function DashboardPage({ balanceState, onNavigate }) {
+export function DashboardPage({ balanceState, onNavigate, user }) {
   const { orders, loading: ordersLoading, error: ordersError } = useOrderHistory();
 
   const totalOrders = orders.length;
@@ -25,60 +25,72 @@ export function DashboardPage({ balanceState, onNavigate }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold text-ink">Selamat datang kembali</h2>
-        <p className="text-sm text-muted">Ringkasan aktivitas akun kamu di LuminaOTP.</p>
+      {/* Greeting */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-base font-semibold text-ink">
+            Halo, {user?.username ?? 'User'} 👋
+          </h2>
+          <p className="mt-0.5 text-sm text-muted">Ini ringkasan aktivitas akun kamu hari ini.</p>
+        </div>
       </div>
 
+      {/* Stats */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard
-          label="Saldo akun"
-          value={balanceState.balance?.formatted ?? '-'}
+          label="Saldo"
+          value={balanceState.balance?.formatted ?? 'Rp0'}
           loading={balanceState.loading}
-          sublabel="Total dana tersedia"
+          sublabel="Dana tersedia"
+          accent
         />
         <StatCard
-          label="Pesanan aktif"
+          label="Pesanan Aktif"
           value={active}
           loading={ordersLoading}
-          sublabel="Sedang menunggu OTP"
+          sublabel="Menunggu OTP"
         />
         <StatCard
-          label="Total pesanan"
+          label="Total Pesanan"
           value={totalOrders}
           loading={ordersLoading}
           sublabel="Sepanjang waktu"
         />
         <StatCard
-          label="Tingkat sukses"
+          label="Sukses Rate"
           value={`${successRate}%`}
           loading={ordersLoading}
           sublabel="Pesanan selesai"
         />
       </div>
 
-      <div className="card flex flex-col items-start justify-between gap-3 p-4 sm:flex-row sm:items-center">
+      {/* CTA */}
+      <div className="flex items-center justify-between gap-4 rounded-lg border border-accent-light bg-accent-light px-4 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-surface-sunken text-ink">
-            <ShoppingBag size={17} />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent">
+            <Zap size={16} className="text-white" />
           </div>
           <div>
             <p className="text-sm font-medium text-ink">Butuh nomor baru?</p>
             <p className="text-xs text-muted">Pilih layanan, negara, dan operator dalam 3 langkah.</p>
           </div>
         </div>
-        <button onClick={() => onNavigate('buy')} className="btn-primary flex items-center gap-1.5">
+        <button
+          onClick={() => onNavigate('buy')}
+          className="btn-primary shrink-0 gap-1.5"
+        >
           Beli Nomor
-          <ArrowRight size={15} />
+          <ArrowRight size={14} />
         </button>
       </div>
 
+      {/* Recent orders */}
       <div>
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-sm font-medium text-ink">Pesanan terbaru</h3>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-ink">Pesanan Terbaru</h3>
           <button
             onClick={() => onNavigate('history')}
-            className="text-sm text-link hover:underline"
+            className="text-xs font-medium text-accent hover:underline"
           >
             Lihat semua
           </button>
@@ -93,32 +105,34 @@ export function DashboardPage({ balanceState, onNavigate }) {
         ) : ordersError ? (
           <EmptyState title="Gagal memuat pesanan" description={ordersError} />
         ) : recentOrders.length === 0 ? (
-          <EmptyState
-            title="Belum ada pesanan"
-            description="Pesanan nomor yang kamu buat akan muncul di sini."
-          />
+          <div className="card px-5 py-10 text-center">
+            <ShoppingBag size={24} className="mx-auto mb-2 text-muted-2" />
+            <p className="text-sm font-medium text-ink">Belum ada pesanan</p>
+            <p className="mt-1 text-xs text-muted">Pesanan nomor yang kamu buat akan muncul di sini.</p>
+            <button onClick={() => onNavigate('buy')} className="btn-primary mt-4">
+              Beli Nomor Pertama
+            </button>
+          </div>
         ) : (
           <div className="card overflow-hidden">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-line bg-surface-alt text-xs uppercase tracking-wide text-muted">
+              <thead className="border-b border-line bg-surface-alt">
                 <tr>
-                  <th className="px-4 py-2.5 font-medium">Nomor</th>
-                  <th className="px-4 py-2.5 font-medium">Layanan</th>
-                  <th className="px-4 py-2.5 font-medium">Status</th>
-                  <th className="px-4 py-2.5 font-medium">Waktu</th>
+                  <th className="px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted">Nomor</th>
+                  <th className="px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted">Layanan</th>
+                  <th className="px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted">Status</th>
+                  <th className="px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted">Waktu</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
                 {recentOrders.map((order) => (
-                  <tr key={order.orderId}>
-                    <td className="px-4 py-2.5 font-mono text-ink">{order.phoneNumber}</td>
-                    <td className="max-w-[160px] truncate px-4 py-2.5 text-muted">
-                      {order.service}
-                    </td>
-                    <td className="px-4 py-2.5">
+                  <tr key={order.orderId} className="hover:bg-surface-alt">
+                    <td className="px-4 py-3 font-mono text-sm text-ink">{order.phoneNumber}</td>
+                    <td className="max-w-[140px] truncate px-4 py-3 text-sm text-muted">{order.service}</td>
+                    <td className="px-4 py-3">
                       <StatusBadge status={order.status} />
                     </td>
-                    <td className="whitespace-nowrap px-4 py-2.5 text-muted">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-muted">
                       {formatDate(order.createdAt)}
                     </td>
                   </tr>

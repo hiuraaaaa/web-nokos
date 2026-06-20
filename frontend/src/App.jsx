@@ -9,6 +9,9 @@ import { BalancePage } from './presentation/pages/BalancePage';
 import { SettingsPage } from './presentation/pages/SettingsPage';
 import { useBalance } from './usecases/useBalance';
 
+// Mock user — nanti ganti dari auth context
+const MOCK_USER = { username: 'hiuraaaaa', email: 'user@example.com' };
+
 export default function App() {
   const [tab, setTab] = useState('dashboard');
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -21,32 +24,39 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen bg-surface-alt">
-      {/* Mobile drawer */}
+      {/* Mobile drawer overlay */}
       {drawerOpen && (
         <div className="fixed inset-0 z-30 md:hidden">
           <div
-            className="absolute inset-0 bg-ink/30"
+            className="absolute inset-0 bg-ink/40"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 w-60 bg-surface">
-            <Sidebar active={tab} onChange={handleChangeTab} />
+          <div className="absolute inset-y-0 left-0 w-60 shadow-dropdown">
+            <Sidebar active={tab} onChange={handleChangeTab} user={MOCK_USER} />
           </div>
         </div>
       )}
 
-      <Sidebar active={tab} onChange={handleChangeTab} />
+      {/* Desktop sidebar */}
+      <Sidebar active={tab} onChange={handleChangeTab} user={MOCK_USER} />
 
-      <div className="flex min-h-screen flex-1 flex-col">
+      {/* Main content */}
+      <div className="flex min-h-screen flex-1 flex-col overflow-hidden">
         <TopBar
           balance={balanceState.balance}
           loading={balanceState.loading}
           active={tab}
           onMenuClick={() => setDrawerOpen(true)}
+          onNavigate={handleChangeTab}
         />
-        <main className="flex-1 px-4 py-5 pb-24 sm:px-6 md:pb-8">
+        <main className="flex-1 overflow-auto px-4 py-5 pb-24 sm:px-6 md:pb-8">
           <div className="mx-auto max-w-5xl">
             {tab === 'dashboard' && (
-              <DashboardPage balanceState={balanceState} onNavigate={handleChangeTab} />
+              <DashboardPage
+                balanceState={balanceState}
+                onNavigate={handleChangeTab}
+                user={MOCK_USER}
+              />
             )}
             {tab === 'buy' && <BuyNumberPage />}
             {tab === 'history' && <HistoryPage />}
@@ -56,6 +66,7 @@ export default function App() {
         </main>
       </div>
 
+      {/* Mobile bottom nav */}
       <BottomNav active={tab} onChange={handleChangeTab} />
     </div>
   );
