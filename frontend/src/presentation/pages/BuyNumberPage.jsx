@@ -10,6 +10,17 @@ import { SelectionSummary } from '../components/SelectionSummary';
 import { PromoBanner } from '../components/PromoBanner';
 import { VirtualNumberIntro } from '../components/VirtualNumberIntro';
 
+function StepLabel({ number, text }) {
+  return (
+    <div className="mb-2 flex items-center gap-2">
+      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface-sunken text-[11px] font-medium text-ink">
+        {number}
+      </span>
+      <p className="text-sm font-medium text-ink">{text}</p>
+    </div>
+  );
+}
+
 export function BuyNumberPage() {
   const { services, countries, operators, loading, error, loadCountries, loadOperators } =
     useCatalog();
@@ -46,19 +57,19 @@ export function BuyNumberPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-2xl space-y-5">
       <PromoBanner />
       <VirtualNumberIntro />
 
       {(error || orderError) && (
-        <p className="rounded-lg border border-signal-rose/30 bg-signal-rose/10 px-4 py-2 text-sm text-signal-rose">
+        <p className="rounded-md border border-signal-rose-bg bg-signal-rose-bg px-4 py-2.5 text-sm text-signal-rose">
           {error || orderError}
         </p>
       )}
 
       {!selectedService ? (
         <section>
-          <p className="mb-2 text-sm font-medium text-muted">1. Pilih layanan</p>
+          <StepLabel number={1} text="Pilih layanan" />
           <ServiceGrid
             services={services}
             selected={selectedService}
@@ -82,7 +93,7 @@ export function BuyNumberPage() {
 
       {selectedService && !selectedPick && (
         <section>
-          <p className="mb-2 text-sm font-medium text-muted">2. Pilih negara &amp; harga</p>
+          <StepLabel number={2} text="Pilih negara & harga" />
           {!loading.countries && countries.length === 0 ? (
             <EmptyState
               title="Belum ada negara tersedia"
@@ -111,7 +122,7 @@ export function BuyNumberPage() {
 
       {selectedPick && (
         <section>
-          <p className="mb-2 text-sm font-medium text-muted">3. Pilih operator &amp; pesan</p>
+          <StepLabel number={3} text="Pilih operator & pesan" />
           <OperatorList
             operators={operators}
             loading={loading.operators}

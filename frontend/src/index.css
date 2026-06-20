@@ -7,19 +7,42 @@
     @apply border-line;
   }
 
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
   body {
+    @apply bg-surface-alt text-ink;
     font-feature-settings: 'tnum';
   }
 
   :focus-visible {
-    outline: 2px solid theme('colors.signal.indigo');
-    outline-offset: 2px;
+    outline: 2px solid theme('colors.link');
+    outline-offset: 1px;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply rounded-md border border-line bg-surface px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply rounded-md border border-line px-3.5 py-2 text-sm font-medium text-signal-rose transition-colors hover:bg-signal-rose-bg disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .card {
+    @apply rounded-lg border border-line bg-surface;
+  }
+  .input-field {
+    @apply w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted-2 focus:border-link;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-signal-pulse,
-  .animate-otp-land {
-    animation: none !important;
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

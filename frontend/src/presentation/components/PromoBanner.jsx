@@ -15,7 +15,7 @@ export function PromoBanner() {
 
   if (BANNERS.length === 0) {
     return (
-      <div className="flex h-28 items-center justify-center rounded-2xl border border-dashed border-line bg-surface">
+      <div className="flex h-24 items-center justify-center rounded-md border border-dashed border-line bg-surface">
         <p className="px-6 text-center text-xs text-muted">
           Banner promosi belum ada — taruh gambar di{' '}
           <code className="font-mono text-ink">public/banners/</code>, lalu daftarkan path-nya
@@ -26,8 +26,8 @@ export function PromoBanner() {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line">
-      <div className="relative h-28">
+    <div className="card overflow-hidden">
+      <div className="relative h-24">
         {BANNERS.map((src, i) => (
           <img
             key={src}
@@ -40,12 +40,12 @@ export function PromoBanner() {
         ))}
       </div>
       {BANNERS.length > 1 && (
-        <div className="flex justify-center gap-1.5 bg-surface py-2">
+        <div className="flex justify-center gap-1.5 border-t border-line bg-surface-alt py-2">
           {BANNERS.map((_, i) => (
             <span
               key={i}
               className={`h-1.5 rounded-full transition-all ${
-                i === index ? 'w-5 bg-signal-indigo' : 'w-1.5 bg-line'
+                i === index ? 'w-5 bg-ink' : 'w-1.5 bg-line-strong'
               }`}
             />
           ))}
